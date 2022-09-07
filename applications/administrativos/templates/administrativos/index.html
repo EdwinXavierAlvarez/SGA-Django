@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% block content %}
+    <h1 class="h4">Administrativos</h1>
+    <a class="btn btn-primary btn-sm formmodal" nhref="{% url "agregar_administrativo" %}" href="javascript;">
+        <i class="bi bi-plus-circle-fill"></i> Adicionar
+    </a>
+
+    {% for admin in data %}
+        <p>Admin</p>
+    {% endfor %}
+
+    <div class="row mt-4">
+        <table class="table table-bordered">
+            <thead class="table-light">
+                <tr>
+                    <th>Nombre</th>
+                    <th>Grupo</th>
+                    <th>Usuario</th>
+                    <th>Identificación</th>
+                    <th>Email/Teléfono</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for admin in data %}
+                    <tr>
+                        <td>{{ admin.persona }}</td>
+                        <td>
+                            {% for grupo in admin.persona.grupos %}
+                                <p>{{ grupo }}</p>
+                            {% endfor %}
+                        </td>
+                        <td>{{ admin.persona.usuario }}</td>
+                        <td>{{ admin.persona.cedula }}</td>
+                        <td>{{ admin.persona.email_institucional }}<br>{{ admin.persona.telefono_movil}}</td>
+                        <td>
+                            {% comment %} <a class="btn btn-primary btn-sm formmodal" nhref="{% url "editar_administrativo" admin.id %}" href="javascript;">
+                                <i class="bi bi-pencil-square"></i> Editar
+                            </a> {% endcomment %}
+                            <a class="btn btn-danger btn-sm formmodal" nhref="{% url "eliminar_administrativo" admin.id %}" href="javascript;">
+                                <i class="bi bi-trash"></i> Eliminar
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+
+        </table>
+    </div>
+
+    <p>
+        {% comment %} <a href="{{ urlFor('biblioteca.create') }}">Crear nuevo libro</a> {% endcomment %}
+    </p>
+
+{% endblock content %}

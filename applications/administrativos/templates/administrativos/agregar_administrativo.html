@@ -1,0 +1,108 @@
+{% extends 'modals/formModal.html' %}
+{% load static %}   
+
+{% block extrajs %}
+{% comment %} <script src="{% static 'js/funciones.js' %}"></script>  {% endcomment %}
+<script type="text/javascript">
+        
+    ready(function(){
+        const verificarPais = async (id_pais) => {
+            ocultarElementos(arrayElements);
+            if(id_pais == {{ pais_ecuador_id }}) {
+                nacionalidadSelect.value = {{ nacionalidad_ecuador_id }};
+                mostrarElementos(arraySelect);
+                validarElementos(arrayElementsSelect);
+                noValidarElementos(arrayElementsInput);
+            } else{
+                mostrarElementos(arrayInput);
+                validarElementos(arrayElementsInput);
+                noValidarElementos(arrayElementsSelect);
+                const data = await fetchRequest(`/api/?action=get_nacionalidad`, {'pais_id': id_pais}, "{{ csrf_token }}" );
+                if(data.result !== "ok"){
+                    alert("Error al cargar la nacionalidad");
+                    return;
+                }
+                nacionalidadSelect.value = data.nacionalidad_id;
+            }
+        }
+
+        const arrayElements = [
+            "fieldset_provincia_procedencia", "fieldset_canton_procedencia", 
+            "fieldset_parroquia_procedencia", "fieldset_provincia_procedencia_select",
+            "fieldset_canton_procedencia_select", "fieldset_parroquia_procedencia_select"];
+        const arraySelect = ["fieldset_provincia_procedencia_select",
+            "fieldset_canton_procedencia_select", "fieldset_parroquia_procedencia_select"];
+        const arrayInput = ["fieldset_provincia_procedencia",
+            "fieldset_canton_procedencia", "fieldset_parroquia_procedencia"];
+        const arrayElementsSelect = ["id_provincia_procedencia_select",
+            "id_canton_procedencia_select", "id_parroquia_procedencia_select"];
+        const arrayElementsInput = ["id_provincia_procedencia",
+            "id_canton_procedencia", "id_parroquia_procedencia"];
+        
+        const nacionalidadSelect = document.getElementById("id_nacionalidad");   
+        const paisSelect = document.getElementById("id_pais_procedencia");
+        
+        paisSelect.addEventListener('change', (e) => {
+            verificarPais(e.target.value);
+        });
+        
+        const provinciaNacimientoSelect = document.getElementById("id_provincia_procedencia_select");
+        provinciaNacimientoSelect.addEventListener('change',async (e) => {
+            const id = e.target.value;
+            if(id > 0){
+                const data = await fetchRequest(`/api/?action=get_cantones`, {'provincia_id': id}, "{{ csrf_token }}" );
+                if(data.result !== "ok"){
+                    alert("Error al cargar los cantones");
+                    return;
+                }
+                appendValuesToSelect("id_canton_procedencia_select", data.cantones);
+            }
+        });
+
+        const cantonNacimientoSelect = document.getElementById("id_canton_procedencia_select");
+        cantonNacimientoSelect.addEventListener('change',async (e) => {
+            const id = e.target.value;
+            if(id > 0){
+                const data = await fetchRequest(`/api/?action=get_parroquias`, {'canton_id': id}, "{{ csrf_token }}" );
+                if(data.result !== "ok"){
+                    alert("Error al cargar las parroquias");
+                    return;
+                }
+                appendValuesToSelect("id_parroquia_procedencia_select", data.parroquias);
+            }
+        });
+
+        const provinciaResidenciaSelect = document.getElementById("id_provincia");
+        provinciaResidenciaSelect.addEventListener('change',async (e) => {
+            const id = e.target.value;
+            if(id > 0){
+                const data = await fetchRequest(`/api/?action=get_cantones`, {'provincia_id': id}, "{{ csrf_token }}" );
+                if(data.result !== "ok"){
+                    alert("Error al cargar los cantones");
+                    return;
+                }
+                appendValuesToSelect("id_canton", data.cantones);
+            }
+        }); 
+        
+        const cantonResidenciaSelect = document.getElementById("id_canton");
+        cantonResidenciaSelect.addEventListener('change',async (e) => {
+            const id = e.target.value;
+            if(id > 0){
+                const data = await fetchRequest(`/api/?action=get_parroquias`, {'canton_id': id}, "{{ csrf_token }}" );
+                if(data.result !== "ok"){
+                    alert("Error al cargar las parroquias");
+                    return;
+                }
+                appendValuesToSelect("id_parroquia", data.parroquias);
+            }
+        });
+
+        ocultarElementos(arraySelect);  
+    });
+</script>
+{% endblock extrajs %}
+
+{% block url %}{% url "agregar_administrativo" %}{% endblock url %}
+{% block title %}Agregar Administrador{% endblock title %}
+{% block formdestination %}Administrativo{% endblock formdestination %}

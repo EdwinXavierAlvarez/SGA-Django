@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block content %}
+    <h1 class="h4">Actualizar Tablas de Base de Datos</h1>
+    {% comment %} <a class="btn btn-small btn-primary" nhref="{{ path('base_datos_crear') }}"> {% endcomment %}
+    <a class="btn btn-sm btn-primary formmodal" nhref="{% url "actualizar_tablas" %}"  href="javascript;">
+        <i class="bi bi-plus-circle-fill"></i> Actualizar Tabla
+    </a>
+
+    {% comment %} <button class="btn btn-primary" onClick="bloqueoInterfaz()">BLOQUEO INTERFAZ</button> {% endcomment %}
+
+{% endblock content%}
